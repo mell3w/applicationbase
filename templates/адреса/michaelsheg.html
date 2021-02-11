@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{%block content %}
+   <h1>{% block title %} Щеглово  {% endblock %}</h1>
+    <a style="color:#FF0000;font-size:20pt" href="{{ url_for('michael')}}"> Вернуться ко всем открытым заявкам </a>
+	
+   {% for mirodom in mirodom %}
+       <a href = "{{url_for('mirodom', mirodom_id=mirodom['id'])}}">
+	     <h2>{{mirodom['address']}}</h2>
+	   </a2>
+	   <span class = "badge badge-primary">{{ mirodom ['master']}}</span>
+	   <hr>
+	   {% endfor %}
+{% endblock %}

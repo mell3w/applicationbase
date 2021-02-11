@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{%block content %}
+   <h1>{% block title %} Открытые заявки {{kolvo}}  {% endblock %}</h1>
+   <a style="color:#FF0000; font-size:20pt" href="{{ url_for('andrewr')}}"> Перейти в выполненные заявки </a>
+  <p> Вся сумма: {{sdaet}}</P>
+   <p> Сдать: {{dengi}} </p>
+   <p>  Премия: {{prem}}</p>
+   {% for mirodom in mirodom %}
+       <a href = "{{url_for('mirodom', mirodom_id=mirodom['id'])}}">
+	     <h2>{{mirodom['address']}}</h2>
+	   </a2>
+	   <span class = "badge badge-primary">{{ mirodom ['master']}} </span> <span class = "badge badge">{{mirodom['timestamp']}}</span>
+	   
+	   <a href="{{ url_for('edit',id=mirodom['id'])}}">
+	      <span class="badge badge-warning">Edit</span>
+		</a>
+		
+	   <hr>
+	   {% endfor %}
+{% endblock %}

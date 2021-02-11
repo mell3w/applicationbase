@@ -1,0 +1,23 @@
+﻿{% extends 'base.html' %}
+
+{%block content %}
+   <h1>{% block title %} Выполненные заявки  {% endblock %}</h1>
+    <a style="color:#000000;font-size:20pt" href="{{ url_for('andrew')}}"> Вернуться к открытым заявкам </a>
+	<p>  Общее: {{dengi}} </p>
+   <p>  Премия: {{prem}}</p>
+   <p> Сдать: {{sdaet}}</p>
+    <p> ТМ:  использовано - {{tm}}  остаток - {{osttm}}</p>
+   <p> RD:  использовано - {{rd}}  остаток - {{ostrd}}</p>
+   <p> MF:  использовано - {{mf}}  остаток - {{ostmf}}</p>
+   <p> УКП-7:  использовано - {{ykp7}}  остаток - {{ostykp7}}</p>
+   <p> УКП-12:  использовано - {{ykp12}}  остаток - {{ostykp12}}</p>
+   {% for mirodom in mirodom %}
+    <div class="alert alert-info">
+       <a href = "{{url_for('mirodom', mirodom_id=mirodom['id'])}}">
+	     <h2>{{mirodom['address']}}{{mirodom[flat]}}</h2>
+	   </a2>
+	   <span class = "badge badge-primary">{{ mirodom ['ohter']}} </span> <span class = "badge badge-primary">{{ mirodom ['closingdate']}}</span>
+	   <hr>
+	    </div>
+	   {% endfor %}
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{% block title %} Закрыть заявку "{{ mirodom['address']}}" {% endblock %} </h1>
+
+<form method="POST" >
+ <p align="left"> Комментарии к заявке:  <input name="other" type="text" type="submit" value="{{mirodom['other']}}"></p>  
+  <p align="left"> Статус заявки:  <select name="status" id="selectvalue">
+
+<option>Открыта</option>
+
+<option>Выполнена</option>
+
+</select></p>
+ <p align="left"> Ключи ТМ: <input name="keytm" type="text" type="submit" value="{{mirodom['keytm']}}">
+  <p align="left"> Ключ MF: <input name="keymf" type="text" type="submit" value="{{mirodom['keymf']}}">
+   <p align="left"> Ключ RD: <input name="keyrd" type="text" type="submit" value="{{mirodom['keyrd']}}">
+    <p align="left"> УПК-7: <input name="ykpseven" type="text" type="submit" value="{{mirodom['ykpseven']}}">
+	 <p align="left"> УПК-12: <input name="ykptwelve" type="text" type="submit" value="{{mirodom['ykptwelve']}}">
+  <p align="left"> Общая: <input name="money" type="text" type="submit" value="{{mirodom['money']}}"></p>
+  <p align="left"> Премия: <input name="price" type="text" type="submit" value="{{mirodom['price']}}"></p>
+  
+  
+  
+<script>
+let today = new Date().toISOString().substr(0, 10);
+document.querySelector("#todayid").min = today;
+document.querySelector("#todayid").max = today;
+</script>
+  
+ 
+  
+  <input type="submit" name="submit_button" value="Добавить/Изменить">
+<input type="submit" name="submit_button" value="Быстрое закрытие"  onclick = cnfrmbtn()>
+  
+
+  
+</form>
+
+<div>
+	<p></p>
+	<p>Добавить/Изменить - можно добавить ключи, комментарий, деньги и закрыть заявку</p>
+	<p>Быстрое закрытие - моментально закроет заявку и автоматически добавит дату закрытия при нажатии (никакие поля не учитываются, если заявка с деньгами или учетом инвентаря, то воспользуйтесь закрытием вручную (Добавить/Изменить))</p>
+</div>
+ 
+<script>
+	function cnfrmbtn(){
+		if (alert("Заявка закрыта {{mirodom['address']}} {{mirodom['flat']}}")){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+</script>
+
+
+<hr>
+
+{% endblock %}	

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{%block content %}
+ {% for mirodom in mirodom %}
+ <form method="POST">
+ <p align="left"> Мастер <input name="warehouse" type="text" type="submit" value="{{mirodom['master']}}">
+  <p align="left"> Адрес <input name="warehouse" type="text" type="submit" value="{{mirodom['address']}}">
+  <input type="submit">
+ 
+<p> {{showadz}}</p>
+ 
+ {% endfor %}
+{% endblock %}
