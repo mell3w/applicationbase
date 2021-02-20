@@ -1,4 +1,4 @@
-﻿import tkinter as tk
+import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 import sqlite3
@@ -23,12 +23,6 @@ class Main(tk.Frame):
         self.view_records()
 
 
-
-
-
-
-
-
     def init_main(self):
         toolbar = tk.Frame(bg='#d7d8e0', bd=2)
         toolbar.pack(side=tk.TOP, fill=tk.X, expand = True)
@@ -40,24 +34,10 @@ class Main(tk.Frame):
         btn_open_dialog = tk.Button(toolbar, text='Добавить заявку', command=self.open_dialog, bg='#d7d8e0', bd = 0, compound=tk.TOP, image=self.add_img)
         btn_open_dialog.pack(side=tk.LEFT)
 
-        self.update_img = tk.PhotoImage(file='update.gif')
-        btn_edit_dialog = tk.Button(toolbar, text='Редактировать', bg='#d7d8e0',bd=0, image=self.update_img, compound=tk.TOP, command=self.open_update_dialog)
-
-        btn_edit_dialog.pack(side=tk.LEFT)
 
         self.delete_img = tk.PhotoImage(file='delete.gif')
         btn_delete = tk.Button(toolbar, text='Удалить', bg='#d7d8e0',bd=0, image=self.delete_img, compound=tk.TOP, command=self.delete_records)
         btn_delete.pack(side=tk.LEFT)
-
-        self.search_img = tk.PhotoImage(file='search.gif')
-        btn_search = tk.Button(toolbar, text='Поиск', bg='#d7d8e0', bd=0, image=self.search_img, compound=tk.TOP, command=self.open_search_dialog)
-        btn_search.pack(side=tk.LEFT)
-
-        self.shwrd = tk.PhotoImage(file='showreadyrecord.gif')
-        btn_shwrd = tk.Button(toolbar, text='Выполненные', bg='#d7d8e0', bd=0, image=self.shwrd,
-                              compound=tk.TOP,
-                              command=self.view_ready_records)
-        btn_shwrd.pack(side=tk.LEFT)
 
 
 
@@ -65,42 +45,13 @@ class Main(tk.Frame):
         btn_ready = tk.Button(toolbar, text='Выполнено', bg='#d7d8e0', bd=0, image=self.ready_img, compound=tk.TOP, command=self.ready_check)
         btn_ready.pack(side=tk.LEFT)
 
-        self.worker_img=tk.PhotoImage(file='man.gif')
-        btn_worker = tk.Button(toolbar, text='Мастера', bg='#d7d8e0', bd=0, image=self.worker_img, compound=tk.TOP, command=self.worker)
-        btn_worker.pack(side=tk.LEFT)
-
-
-        self.sklad_img = tk.PhotoImage(file='sklad.gif')
-        btn_sklad = tk.Button(toolbar, text='Учёт склада', bg='#d7d8e0', bd=0, image=self.sklad_img,compound=tk.TOP, command=self.open_sklad)
-        btn_sklad.pack(side=tk.LEFT)
-
-        self.finance_img=tk.PhotoImage(file='finance.gif')
-        btn_finance = tk.Button(toolbar, text='Финансы', bg='#d7d8e0', bd=0, image=self.finance_img, compound=tk.TOP, command=self.open_finance)
-        btn_finance.pack(side=tk.LEFT)
-
         self.sdal_img=tk.PhotoImage(file='sdal.gif')
         btn_sdal = tk.Button(toolbar, text='Сдал', bg='#d7d8e0', bd=0, image=self.sdal_img, compound=tk.TOP, command=self.sdal_true)
         btn_sdal.pack(side=tk.LEFT)
 
-        self.refresh_img = tk.PhotoImage(file='refresh.gif')
-        btn_refresh = tk.Button(toolbar, text='Обновить', bg='#d7d8e0', bd=0, image=self.refresh_img, compound=tk.TOP,
-                                command=self.view_records)
-        btn_refresh.pack(side=tk.LEFT)
-
         self.duble_img = tk.PhotoImage(file='copy.gif')
         btn_duble = tk.Button(toolbar, text='Дублировать', bg='#d7d8e0', bd=0, image=self.duble_img, compound=tk.TOP, command=self.duble_z)
         btn_duble.pack(side=tk.LEFT)
-
-        self.print_img = tk.PhotoImage(file='print.gif')
-        btn_print = tk.Button(toolbar, text='Печать', bg = '#d7d8e0', bd=0, image=self.print_img, compound=tk.TOP, command=self.print)
-        btn_print.pack(side=tk.LEFT)
-
-        self.txt_img = tk.PhotoImage(file='txt.gif')
-        btn_txt = tk.Button(toolbar, text='Добавить в блокнот', bg = '#d7d8e0', bd=0, image=self.txt_img, compound=tk.TOP, command=self.vblock)
-        btn_txt.pack(side=tk.LEFT)
-
-
-
 
 
 
@@ -152,6 +103,15 @@ class Main(tk.Frame):
         self.tree.configure(yscrollcommand=scroll.set)
 
 
+        def deletee(event):
+            app.delete_records()
+        self.tree.bind('<Delete>', deletee)
+
+        def upd(event):
+            Update()
+        self.tree.bind('<Double-Button-1>', upd)
+
+
 
 
     def records(self, city, address, flat, tel, fio, description, money, price, other, master, keytm, keyrd, keymf, ykpseven, ykptwelve, status,mmyy, sdal):
@@ -165,12 +125,17 @@ class Main(tk.Frame):
         self.view_records()
 
     def view_records(self):
-        self.db.c.execute('''SELECT id, city, address, flat, tel, fio, description, money, price, other, master,timestamp, status, closingdate, sdal  FROM mirodom''')
+        self.db.c.execute('''SELECT id, city, address, flat, tel, fio, description, money, price, other, master,timestamp, status, closingdate, sdal  FROM mirodom WHERE status='Открыта' ''')
         [self.tree.delete(i) for i in self.tree.get_children()]
         [self.tree.insert('','end', values = row) for row in self.db.c.fetchall()]
 
     def view_ready_records(self):
         self.db.c.execute('''SELECT id, city, address, flat, tel, fio, description, money, price, other, master,timestamp, status, closingdate,sdal FROM mirodom WHERE status='Выполнена' ''')
+        [self.tree.delete(i) for i in self.tree.get_children()]
+        [self.tree.insert('', 'end', values=row) for row in self.db.c.fetchall()]
+
+    def view_all(self):
+        self.db.c.execute('''SELECT id, city, address, flat, tel, fio, description, money, price, other, master,timestamp, status, closingdate,sdal FROM mirodom ''')
         [self.tree.delete(i) for i in self.tree.get_children()]
         [self.tree.insert('', 'end', values=row) for row in self.db.c.fetchall()]
 
@@ -187,9 +152,45 @@ class Main(tk.Frame):
 
 
 
-    def search_records(self, searchi):
+    def search_city_records(self, searchi):
         searching = ('%'+searchi + '%',)
-        self.db.c.execute('''SELECT id, city, address, flat, tel, fio, description, money, price, other, master,timestamp, status, closingdate,sdal FROM mirodom WHERE description OR city OR address OR flat OR tel LIKE ?''', searching)
+        self.db.c.execute('''SELECT id, city, address, flat, tel, fio, description, money, price, other, master,timestamp, status, closingdate,sdal FROM mirodom WHERE city LIKE ?''', searching)
+        [self.tree.delete(i) for i in self.tree.get_children()]
+        [self.tree.insert('','end',values=row) for row in self.db.c.fetchall()]
+
+    def search_address_records(self, searchi):
+        searching = ('%'+searchi + '%',)
+        self.db.c.execute('''SELECT id, city, address, flat, tel, fio, description, money, price, other, master,timestamp, status, closingdate,sdal FROM mirodom WHERE address LIKE ?''', searching)
+        [self.tree.delete(i) for i in self.tree.get_children()]
+        [self.tree.insert('','end',values=row) for row in self.db.c.fetchall()]
+
+    def search_flat_records(self, searchi):
+        searching = ('%'+searchi + '%',)
+        self.db.c.execute('''SELECT id, city, address, flat, tel, fio, description, money, price, other, master,timestamp, status, closingdate,sdal FROM mirodom WHERE flat LIKE ?''', searching)
+        [self.tree.delete(i) for i in self.tree.get_children()]
+        [self.tree.insert('','end',values=row) for row in self.db.c.fetchall()]
+
+    def search_description_records(self, searchi):
+        searching = ('%'+searchi + '%',)
+        self.db.c.execute('''SELECT id, city, address, flat, tel, fio, description, money, price, other, master,timestamp, status, closingdate,sdal FROM mirodom WHERE description LIKE ?''', searching)
+        [self.tree.delete(i) for i in self.tree.get_children()]
+        [self.tree.insert('','end',values=row) for row in self.db.c.fetchall()]
+
+    def search_tel_records(self, searchi):
+        searching = ('%'+searchi + '%',)
+        self.db.c.execute('''SELECT id, city, address, flat, tel, fio, description, money, price, other, master,timestamp, status, closingdate,sdal FROM mirodom WHERE tel LIKE ?''', searching)
+        [self.tree.delete(i) for i in self.tree.get_children()]
+        [self.tree.insert('','end',values=row) for row in self.db.c.fetchall()]
+
+    def search_fio_records(self, searchi):
+        searching = ('%'+searchi + '%',)
+        self.db.c.execute('''SELECT id, city, address, flat, tel, fio, description, money, price, other, master,timestamp, status, closingdate,sdal FROM mirodom WHERE fio LIKE ?''', searching)
+        [self.tree.delete(i) for i in self.tree.get_children()]
+        [self.tree.insert('','end',values=row) for row in self.db.c.fetchall()]
+
+    def search_other_records(self, searchi):
+        searching = ('%'+searchi + '%',)
+        self.db.c.execute('''SELECT id, city, address, flat, tel, fio, description, money, price, other, master,timestamp, status, closingdate,sdal FROM mirodom WHERE other LIKE ?''', searching)
         [self.tree.delete(i) for i in self.tree.get_children()]
         [self.tree.insert('','end',values=row) for row in self.db.c.fetchall()]
 
@@ -214,7 +215,9 @@ class Main(tk.Frame):
         self.view_ready_records()
 
     def duble_z(self):
-        self.db.c.execute('''INSERT INTO mirodom (city, address , flat , tel , fio , description , money, price , other , master , keytm , keyrd , keymf , ykpseven , ykptwelve , timestamp , closingdate , status , mmyy , sdal) SELECT city, address , flat , tel , fio , description , money, price , other , master , keytm , keyrd , keymf , ykpseven , ykptwelve , timestamp , closingdate , status , mmyy , sdal FROM mirodom WHERE ID=?''',  self.tree.set(self.tree.selection()[0], '#1'), )
+        application = self.db.c.execute('''SELECT city, address , flat , tel , fio , description , money, price , other , master , keytm , keyrd , keymf , ykpseven , ykptwelve , timestamp , closingdate , status , mmyy , sdal FROM mirodom WHERE ID=?''', (self.tree.set(self.tree.selection()[0],'#1'),)).fetchone()
+        self.db.c.execute(f'''INSERT INTO mirodom (city, address , flat , tel , fio , description , money, price , other , master , keytm , keyrd , keymf , ykpseven , ykptwelve , timestamp , closingdate , status , mmyy , sdal) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', application)
+        self.db.conn.commit()
         self.view_records()
 
     def print(self):
@@ -712,7 +715,7 @@ class Update(Child):
 
 
 
-class Search(tk.Toplevel):
+class Search_city(tk.Toplevel):
     def __init__(self):
         super().__init__(root)
         self.init_search()
@@ -740,7 +743,193 @@ class Search(tk.Toplevel):
 
         btn_ok = ttk.Button(self, text='Поиск')
         btn_ok.place(x=100, y=100)
-        btn_ok.bind('<Button-1>', lambda event: self.view.search_records(self.entry_search.get()))
+        btn_ok.bind('<Button-1>', lambda event: self.view.search_city_records(self.entry_search.get()))
+        btn_ok.bind('<Button-1>', lambda event: self.destroy(), add='+')
+
+class Search_address(tk.Toplevel):
+    def __init__(self):
+        super().__init__(root)
+        self.init_search()
+        self.view = app
+
+
+
+
+    def init_search(self):
+        self.title('Поиск')
+        self.geometry('400x220+400+300')
+        self.resizable(True, True)
+
+        self.focus_set()
+
+        label_search=tk.Label(self, text='Поиск')
+        label_search.place(x=50, y=50)
+
+        self.entry_search = ttk.Entry(self)
+        self.entry_search.place(x=100, y=50, width=200)
+
+
+        btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
+        btn_cancel.place(x=200, y=100)
+
+        btn_ok = ttk.Button(self, text='Поиск')
+        btn_ok.place(x=100, y=100)
+        btn_ok.bind('<Button-1>', lambda event: self.view.search_address_records(self.entry_search.get()))
+        btn_ok.bind('<Button-1>', lambda event: self.destroy(), add='+')
+
+class Search_flat(tk.Toplevel):
+    def __init__(self):
+        super().__init__(root)
+        self.init_search()
+        self.view = app
+
+
+
+
+    def init_search(self):
+        self.title('Поиск')
+        self.geometry('400x220+400+300')
+        self.resizable(True, True)
+
+        self.focus_set()
+
+        label_search=tk.Label(self, text='Поиск')
+        label_search.place(x=50, y=50)
+
+        self.entry_search = ttk.Entry(self)
+        self.entry_search.place(x=100, y=50, width=200)
+
+
+        btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
+        btn_cancel.place(x=200, y=100)
+
+        btn_ok = ttk.Button(self, text='Поиск')
+        btn_ok.place(x=100, y=100)
+        btn_ok.bind('<Button-1>', lambda event: self.view.search_flat_records(self.entry_search.get()))
+        btn_ok.bind('<Button-1>', lambda event: self.destroy(), add='+')
+
+class Search_description(tk.Toplevel):
+    def __init__(self):
+        super().__init__(root)
+        self.init_search()
+        self.view = app
+
+
+
+
+    def init_search(self):
+        self.title('Поиск')
+        self.geometry('400x220+400+300')
+        self.resizable(True, True)
+
+        self.focus_set()
+
+        label_search=tk.Label(self, text='Поиск')
+        label_search.place(x=50, y=50)
+
+        self.entry_search = ttk.Entry(self)
+        self.entry_search.place(x=100, y=50, width=200)
+
+
+        btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
+        btn_cancel.place(x=200, y=100)
+
+        btn_ok = ttk.Button(self, text='Поиск')
+        btn_ok.place(x=100, y=100)
+        btn_ok.bind('<Button-1>', lambda event: self.view.search_description_records(self.entry_search.get()))
+        btn_ok.bind('<Button-1>', lambda event: self.destroy(), add='+')
+
+class Search_tel(tk.Toplevel):
+    def __init__(self):
+        super().__init__(root)
+        self.init_search()
+        self.view = app
+
+
+
+
+    def init_search(self):
+        self.title('Поиск')
+        self.geometry('400x220+400+300')
+        self.resizable(True, True)
+
+        self.focus_set()
+
+        label_search=tk.Label(self, text='Поиск')
+        label_search.place(x=50, y=50)
+
+        self.entry_search = ttk.Entry(self)
+        self.entry_search.place(x=100, y=50, width=200)
+
+
+        btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
+        btn_cancel.place(x=200, y=100)
+
+        btn_ok = ttk.Button(self, text='Поиск')
+        btn_ok.place(x=100, y=100)
+        btn_ok.bind('<Button-1>', lambda event: self.view.search_tel_records(self.entry_search.get()))
+        btn_ok.bind('<Button-1>', lambda event: self.destroy(), add='+')
+
+class Search_fio(tk.Toplevel):
+    def __init__(self):
+        super().__init__(root)
+        self.init_search()
+        self.view = app
+
+
+
+
+    def init_search(self):
+        self.title('Поиск')
+        self.geometry('400x220+400+300')
+        self.resizable(True, True)
+
+        self.focus_set()
+
+        label_search=tk.Label(self, text='Поиск')
+        label_search.place(x=50, y=50)
+
+        self.entry_search = ttk.Entry(self)
+        self.entry_search.place(x=100, y=50, width=200)
+
+
+        btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
+        btn_cancel.place(x=200, y=100)
+
+        btn_ok = ttk.Button(self, text='Поиск')
+        btn_ok.place(x=100, y=100)
+        btn_ok.bind('<Button-1>', lambda event: self.view.search_fio_records(self.entry_search.get()))
+        btn_ok.bind('<Button-1>', lambda event: self.destroy(), add='+')
+
+class Search_other(tk.Toplevel):
+    def __init__(self):
+        super().__init__(root)
+        self.init_search()
+        self.view = app
+
+
+
+
+    def init_search(self):
+        self.title('Поиск')
+        self.geometry('400x220+400+300')
+        self.resizable(True, True)
+
+        self.focus_set()
+
+        label_search=tk.Label(self, text='Поиск')
+        label_search.place(x=50, y=50)
+
+        self.entry_search = ttk.Entry(self)
+        self.entry_search.place(x=100, y=50, width=200)
+
+
+        btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
+        btn_cancel.place(x=200, y=100)
+
+        btn_ok = ttk.Button(self, text='Поиск')
+        btn_ok.place(x=100, y=100)
+        btn_ok.bind('<Button-1>', lambda event: self.view.search_other_records(self.entry_search.get()))
         btn_ok.bind('<Button-1>', lambda event: self.destroy(), add='+')
 
 
@@ -1017,9 +1206,63 @@ class DB:
 if __name__=="__main__":
     root = tk.Tk()
     db = DB()
-    #bd=BD()
+
     app = Main(root)
     app.pack()
+
+#============ Виджет Menu ============#
+
+    mainmenu = Menu(root)
+    root.config(menu=mainmenu)
+
+    filemenu = Menu(mainmenu, tearoff=0)
+    filemenu.add_command(label='Добавить заявку', command=Child)
+    filemenu.add_command(label='Сохранить в блокнот', command=Vblock)
+    filemenu.add_command(label='Печать', command=Print)
+
+    mainmenu.add_cascade(label='Файл', menu=filemenu)
+
+#--------------------------------------------------------#
+
+    viewmenu = Menu(mainmenu, tearoff=0)
+    viewmenu.add_command(label='Открытые', command=app.view_records)
+    viewmenu.add_command(label='Выполненые',command=app.view_ready_records)
+    viewmenu.add_command(label='Все', command=app.view_all)
+
+    mainmenu.add_cascade(label='Вид', menu=viewmenu)
+
+# --------------------------------------------------------#
+
+    searchmenu = Menu(mainmenu, tearoff=0)
+    searchmenu.add_command(label='Мастерам', command=Workers)
+    searchmenu.add_separator()
+    searchmenu.add_command(label='Району', command=Search_city)
+    searchmenu.add_command(label='Адресу', command=Search_address)
+    searchmenu.add_command(label='Квартире', command=Search_flat)
+    searchmenu.add_command(label='Телефону', command=Search_tel)
+    searchmenu.add_command(label='ФИО', command=Search_fio)
+    searchmenu.add_command(label='Причине', command=Search_description)
+    searchmenu.add_command(label='Прочее', command=Search_other)
+
+
+    mainmenu.add_cascade(label='Поиск по', menu=searchmenu)
+
+# --------------------------------------------------------#
+
+    othermenu = Menu(mainmenu, tearoff=0)
+    othermenu.add_command(label='Учёт склада', command=Sklad)
+    othermenu.add_command(label='Финансы', command=Finance)
+
+    mainmenu.add_cascade(label='Прочее', menu=othermenu)
+
+
+
+
+
+
+
+#=====================================#
+
     root.title("МИРОДОМ")
     root.geometry("1575x600+400+200")
     root.resizable(True, True)
